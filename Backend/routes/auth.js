@@ -97,11 +97,11 @@ router.post('/login',[
     }
 });
 
-// Route 3: Get Loggedin User Details using POST "/api/auth/getuser" login required
+// Route 3: Get Loggedin User Details using GET "/api/auth/getuser" login required
 //decode authtoken and get userId
 //jo jo request mangti hai user authenticated hona chaiye unma ek header bhejunga authentication token nam ka 
 //aur us header mai se jo bhi data hai use nikalkar fetch krlunga in userId
-router.post('/getuser',fetchuser,async(req,res)=>{
+router.get('/getuser',fetchuser,async(req,res)=>{
 try {
     const userId = req.user.id; //get userId
     const user = await User.findById(userId).select("-password");//after get userId select all fields except password
