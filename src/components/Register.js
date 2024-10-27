@@ -23,21 +23,33 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5000/api/auth/createUser", formData);
-      if (response.data.success) {
+      
+      if (response.status === 201) { // Expecting status 201 for successful creation
         setSuccess("Registration successful! Redirecting to login...");
         setError(""); // Clear any previous errors
+        // Clear form fields after successful registration
+        setFormData({ name: "", email: "", password: "" });
+        
         setTimeout(() => {
           navigate("/login"); 
         }, 2000);
       } else {
-        setError(response.data.message || "Registration failed. Please try again.");
+        setError(response.data.error || "Registration failed. Please try again.");
         setSuccess(""); // Clear any previous success message
       }
     } catch (error) {
-      setError(
-        error.response?.data?.message || 
-        "Error during registration. Please check your details and try again."
-      );
+      // Handle errors more gracefully
+      if (error.response) {
+        // Backend responded with an error
+        setError(
+          error.response.data.errors?.[0]?.msg || // Specific error message
+          error.response.data.error || 
+          "Error during registration. Please check your details and try again."
+        );
+      } else {
+        // Network or other errors
+        setError("Network error. Please try again later.");
+      }
       setSuccess(""); // Clear any previous success message
     }
   };
